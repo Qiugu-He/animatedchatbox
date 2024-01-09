@@ -1,25 +1,73 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import useInterval from '@use-it/interval';
+import { motion } from 'framer-motion';
 import './App.css';
 
-function App() {
+const messages = [
+  { text: 'How do I get better at React?' },
+  { text: 'Just build something!' },
+  { text: 'OK! What should I build?' },
+  { text: 'Iono. Just Google it?' },
+  { text: 'Oh! Do you have any idea?' },
+  { text: 'Just buil anything you like' },
+  { text: 'Sound good!' },
+];
+
+export default function App() {
+  const [messageToShow, setMessageToShow] = useState(0);
+
+  useInterval(() => {
+    setMessageToShow((messageToShow) => messageToShow + 1);
+  }, 2000);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <div className="walkthrough">
+        {messages.map((message, index) => {
+          const even = index % 2 === 0;
+
+          // logic goes here
+          // are we supposed to show a typing indicator?
+          if (messageToShow + 1 === index) {
+            return <Typing key={index} even={even} />;
+          }
+
+          // are we supposed to show this message?
+          if (index > messageToShow) return <div key={index} />;
+
+          return <Message key={index} message={message} />;
+        })}
+      </div>
     </div>
   );
 }
 
-export default App;
+function Typing({ even }) {
+  return (
+    <motion.div
+      className={`typing ${even ? 'is-right' : 'is-left'}`}
+      initial={{ rotate: 10, scale: 0 }}
+      animate={{ rotate: 0, scale: 1 }}
+    >
+      <div className="dots">
+        <div />
+        <div />
+        <div />
+      </div>
+    </motion.div>
+  );
+}
+
+function Message({ message }) {
+  return (
+    <motion.div
+      className="message"
+      initial={{ rotate: -5, scale: 0 }}
+      animate={{ rotate: 0, scale: 1 }}
+    >
+      <div className="avatar">🐸</div>
+      <div className="text">{message.text}</div>
+      <div className="avatar">🐙</div>
+    </motion.div>
+  );
+}
